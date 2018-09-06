@@ -20,6 +20,9 @@ function selectQuote(quotes, quoteState: number) {
 
 function displayQuote(displayEl, toDisplay: {content: string, title:string}) {
   displayEl.innerHTML = toDisplay.content;
+  if(!displayEl.className.includes("container__gen")) {
+    displayEl.className += " container__gen"
+  }
 }
 
 function shuffle(data) {
