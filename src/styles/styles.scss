@@ -7,3 +7,13 @@
 .container {
 
 }
+
+.container__display {
+  margin: 50px;
+}
+
+.container__gen {
+  &:hover {
+    cursor: pointer;
+  }
+}

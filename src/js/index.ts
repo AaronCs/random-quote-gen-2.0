@@ -11,31 +11,63 @@ function getQuotes(numQuotes: number) {
   });
 }
 
-function getRandom(max: number) {
-  return Math.floor(Math.random() * max);
-}
-
-function selectQuote(quotes) {
+function selectQuote(quotes, quoteState: number) {
+  // Rather than randomly selecting, give users a couple of quotes and then let them shuffle them.
   let max = quotes.length;
-  let randomIndex = getRandom(max);
-  return quotes[randomIndex];
+  let quoteIndex = quoteState % (max);
+  return quotes[quoteIndex];
 }
 
-function handleClick(displayEl, toDisplay: {content: string, title:string}) {
+function displayQuote(displayEl, toDisplay: {content: string, title:string}) {
   displayEl.innerHTML = toDisplay.content;
 }
 
-function displayReady(displayEl) {
-  displayEl.innerHTML = "Ready to Generate!";
+function shuffle(data) {
+  // Knuth Shuffle
+  let randomNum;
+  let currIndex = data.length;
+
+  while(currIndex > 0) {
+    randomNum = Math.floor(Math.random() * currIndex);
+    --currIndex;
+
+    let temp = data[currIndex];
+    data[currIndex] = data[randomNum]
+    data[randomNum] = temp;
+  }
+  return data;
 }
 
 function main(data) {
-  // TODO: Change function name. Maybe 'displayQuote'
-  // TODO: Make sure quotes are not selected twice in a row.
-  let button = document.getElementById('gen');
+  // TODO: Change function name to something more descriptive
+  let nextButton = document.getElementById('next');
+  let prevButton = document.getElementById('prev');
+  let shuffleButton = document.getElementById('shuffle');
   let displayEl = document.getElementById('display');
-  displayReady(displayEl);
-  button.addEventListener('click', () => handleClick(displayEl, selectQuote(data)));
+  let quoteState: number = 0;
+  displayQuote(displayEl, data[0]);
+  nextButton.addEventListener('click', () => {
+    ++quoteState;
+    displayQuote(displayEl, selectQuote(data, quoteState))
+  });
+
+  prevButton.addEventListener('click', () => {
+    if(quoteState > 0) {
+      --quoteState;
+      displayQuote(displayEl, selectQuote(data, quoteState))
+    }
+  });
+
+  shuffleButton.addEventListener('click', () => {
+    data = shuffle(data);
+    displayQuote(displayEl, selectQuote(data, quoteState));
+  })
 }
 
-getQuotes(2);
+let genButton = document.getElementById('gen');
+let displayEl = document.getElementById('display');
+genButton.addEventListener('click', () => {
+  displayEl.innerHTML = 'Generating Initial Quotes . . .';
+  // TODO: Have generation button disappear once quotes are generated.
+  getQuotes(10);
+});
